@@ -3,3 +3,6 @@ archived/
 .Rproj.user
 DHB25.Rproj
 docs/
+.Rhistory
+code/08_code_not_anon.R
+code/app_no_blind/

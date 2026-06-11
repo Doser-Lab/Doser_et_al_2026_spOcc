@@ -1,7 +1,7 @@
 # 04a_design_figure.R: script to generate Figure 1 in the manuscript that shows 
 #                      the spatial design and different approaches for data 
 #                      collection.
-# Author: Jeffrey W. Doser
+# Author: 
 rm(list = ls())
 library(spOccupancy)
 library(ggplot2)

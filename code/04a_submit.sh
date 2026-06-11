@@ -1,8 +1,8 @@
 #!/usr/bin/bash
 #
 # Script:  04a_submit.sh
-# Usage: For submitting multiple batch jobs to the NCSU HPC.
-# Author: Jeffrey W. Doser (adapted from NCSU HPC)
+# Usage: For submitting multiple batch jobs to the HPC.
+# Author: 
 #
 # To run, type:
 #     ./04a_submit.sh [start_row end_row replicates] 
@@ -25,12 +25,6 @@ fi
 start_row=$1
 end_row=$2
 reps=$3
-
-
-
-#2) Call the main script once from here, give it the start end and rows and do the loop in the
-# main script
-
 
 
 # Output printed to the screen

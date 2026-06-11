@@ -1,6 +1,6 @@
 # 01a_get_data.R: script to calculate the simulated landscapes for use in the 
 #                 Simulation Study 1. 
-# Author: Jeffrey W. Doser
+# Author: 
 rm(list = ls())
 library(spOccupancy)
 # Load utils for simulation function

@@ -1,6 +1,6 @@
 # 06b_summary.R: script to summarize the results and generate basic figures included 
 #                in the manuscript. 
-# Author: Jeffrey W. Doser
+# Author: 
 rm(list = ls())
 library(ggplot2)
 library(dplyr)
@@ -106,7 +106,7 @@ decay_fig_ci_width <- ggplot(data = decay_fig_df, aes(x = sp_decay, y = avg_ci_w
   theme_bw(base_size = 14) + 
   theme(text = element_text(family="LM Roman 10"), 
         panel.grid = element_blank()) + 
-  labs(x = "Spatial Decay", y = "95% CI Width", title = "(e)")
+  labs(x = "Spatial Decay", y = "95% CI Width", title = "(f)")
 # Number of plots
 n_plot_fig_df <- fig_2_df %>%
   group_by(n_plot) %>%
@@ -391,22 +391,6 @@ avg_df_wide %>%
             coverage_diff = mean(coverage_diff)) %>%
   ungroup() %>%
   print(n = nrow(.))
-
-# Takeaways from nonspatial model: Coverage is always bad, and that in and of 
-#                                  itself is a reason to use a spatial model 
-#                                  in effectively all circumstances. For bias, 
-#                                  the difference in bias between the nonspatial 
-#                                  and spatial increases as the number of plots 
-#                                  increase, with the spatial model substantially 
-#                                  outperforming the nonspatial model. Furthermore, 
-#                                  the only situations in which bias is lower 
-#                                  for the nonspatial models appears to be when 
-#                                  the prevalence is higher. This is not anything 
-#                                  to do with the nonspatial model, but is rather
-#                                  a result of the spatial model having larger
-#                                  bias when the species is prevalent. Design had 
-#                                  no influence on the relative performance of the 
-#                                  spatial vs. nonspatial model. 
 
 # Make Figure 5 -----------------------
 phi_levels <- c(0.9, 0.7, 0.5, 0.3, 0.1) 

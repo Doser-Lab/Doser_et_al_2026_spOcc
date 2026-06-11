@@ -2,29 +2,15 @@
 #                                into the specific metrics that will be used to calculate 
 #                                bias, coverage rates, and credible interval widths
 #                                for the model misspecification scenarios. 
-# Author: Jeffrey W. Doser and Robert M. Howell
+# Author: 
 rm(list = ls())
 
 # Directories -------------------------------------------------------------
-# Set directories, which differ depending on if we run on our machines locally or
-# if running on the NC State HPC
-machine.name <- Sys.info()['nodename']
-if (machine.name == 'pop-os' | machine.name == 'ROBBIESLAPTOP') {
-  code_dir <- 'code/'
-  results_dir <- 'results/full_sim_results/'
-  data_dir <- 'data/'
-} else { # Running on NCSU HPC
-  if (Sys.info()["user"] == 'jwdoser') { # Jeff running it
-    code_dir <- '/share/doserlab/jwdoser/DHB25/code/'
-    results_dir <- '/share/doserlab/jwdoser/DHB25/results/'
-    data_dir <- '/share/doserlab/jwdoser/DHB25/data/'
-  } else { # Robbie running it
-    code_dir <- '/share/doserlab/rmhowel3/occ_research/code/'
-    results_dir <- '/share/doserlab/rmhowel3/occ_research/results/'
-    data_dir <- '/share/doserlab/rmhowel3/occ_research/data/'
-    
-  }
-}
+# Set directories. NOTE: this does not reflect the true code for running on 
+# an HPC. This was changed to comply with requirements of double-blind review.
+code_dir <- 'code/'
+results_dir <- 'results/full_sim_results/'
+data_dir <- 'data/'
 
 # Setup -------------------------------------------------------------------
 # Read in landscape parameters
