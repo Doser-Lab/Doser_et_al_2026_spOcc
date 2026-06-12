@@ -1,6 +1,6 @@
 # 06b_summary.R: script to summarize the results and generate basic figures included 
 #                in the manuscript. 
-# Author: 
+# Author: Jeffrey W. Doser
 rm(list = ls())
 library(ggplot2)
 library(dplyr)
@@ -557,7 +557,7 @@ decay_fig_ci_width <- ggplot(data = decay_fig_df, aes(x = sp_decay, y = avg_ci_w
   theme_bw(base_size = 16) + 
   theme(text = element_text(family="LM Roman 10"), 
         panel.grid = element_blank()) + 
-  labs(x = "Spatial Decay", y = "95% CI Width", title = "(e)", col = "Model")
+  labs(x = "Spatial Decay", y = "95% CI Width", title = "(f)", col = "Model")
 # Number of plots
 n_plot_fig_df <- fig_4_df %>%
   group_by(n_plot, model) %>%
@@ -673,9 +673,6 @@ avg_by_scenario <- summary_df %>%
             coverage = mean(coverage, na.rm = TRUE), 
             ci_width = mean(ci_width, na.rm = TRUE)) %>%
   ungroup()
-# TODO: this is just for debugging some of the different values. 
-bad.indx <- which(apply(summary_df, 1, function(a) sum(is.na(a))) > 0)
-missing.vals <- summary_df[bad.indx, ]
 
 # Figure S2 ----------------------------
 fig_S2_df <- summary_df %>%
@@ -761,7 +758,7 @@ decay_fig_ci_width <- ggplot(data = decay_fig_df, aes(x = sp_decay, y = avg_ci_w
   theme_bw(base_size = 14) + 
   theme(text = element_text(family="LM Roman 10"), 
         panel.grid = element_blank()) + 
-  labs(x = "Spatial Decay", y = "95% CI Width", title = "(e)")
+  labs(x = "Spatial Decay", y = "95% CI Width", title = "(f)")
 # Number of plots
 n_plot_fig_df <- fig_S2_df %>%
   group_by(n_plot) %>%
@@ -881,4 +878,223 @@ fig_S2 <- (prev_fig_bias | prev_fig_coverage | prev_fig_ci_width) /
   (neighbors_fig_bias | neighbors_fig_coverage | neighbors_fig_ci_width)
 fig_S2
 ggsave(file = 'figures/Figure-S2.png', width = 12, height = 12, units = 'in',
+       bg = 'white')
+
+# Compare spatial vs. nonspatial model ------------------------------------
+spatial_summary_df <- summary_df
+# Loads an object called summary_df
+load("results/misspec-nonspatial_summary_sim_1_results.rda")
+
+spatial_summary_df$model <- "Spatial"
+summary_df$model <- "Nonspatial"
+
+full_summary_df <- rbind(spatial_summary_df, summary_df)
+
+fig_4_df <- full_summary_df %>%
+  group_by(model, prevalence, sp_decay, n_plot, design, neighbors) %>%
+  summarize(avg_bias = mean(bias, na.rm = TRUE), 
+            low_bias = quantile(bias, 0.025, na.rm = TRUE), 
+            high_bias = quantile(bias, 0.975, na.rm = TRUE),
+            avg_coverage = mean(coverage, na.rm = TRUE), 
+            low_coverage = quantile(coverage, 0.025, na.rm = TRUE), 
+            high_coverage = quantile(coverage, 0.975, na.rm = TRUE),
+            avg_ci_width = mean(ci_width, na.rm = TRUE), 
+            low_ci_width = quantile(ci_width, 0.025, na.rm = TRUE), 
+            high_ci_width = quantile(ci_width, 0.975, na.rm = TRUE)) %>%
+  ungroup()
+
+# Prevalence --------------------------
+prev_fig_df <- fig_4_df %>%
+  group_by(model, prevalence) %>%
+  summarize(avg_bias = mean(avg_bias, na.rm = TRUE), 
+            low_bias = mean(low_bias, na.rm = TRUE), 
+            high_bias = mean(high_bias, na.rm = TRUE), 
+            avg_coverage = mean(avg_coverage, na.rm = TRUE), 
+            low_coverage = mean(low_coverage, na.rm = TRUE), 
+            high_coverage = mean(high_coverage, na.rm = TRUE), 
+            avg_ci_width = mean(avg_ci_width, na.rm = TRUE), 
+            low_ci_width = mean(low_ci_width, na.rm = TRUE), 
+            high_ci_width = mean(high_ci_width, na.rm = TRUE)) %>% 
+  mutate(prevalence = round(plogis(prevalence), 2))
+prev_fig_bias <- ggplot(data = prev_fig_df, aes(x = factor(prevalence), y = avg_bias, 
+                                                col = model)) + 
+  geom_point(position = position_dodge(width = 0.3)) + 
+  geom_segment(aes(y = low_bias, yend = high_bias), lineend = "butt",
+               position = position_dodge(width = 0.3)) + 
+  theme_bw(base_size = 16) + 
+  theme(text = element_text(family="LM Roman 10"), 
+        panel.grid = element_blank()) + 
+  scale_color_brewer(palette = "Set1") + 
+  geom_hline(yintercept = 0, linetype = 2, col = "black") + 
+  labs(x = "Average Occupancy Probability", y = "Bias", title = "(a)", 
+       col = "Model")
+prev_fig_coverage <- ggplot(data = prev_fig_df, aes(x = factor(prevalence), y = avg_coverage, 
+                                                    col = model)) + 
+  geom_point(position = position_dodge(width = 0.3)) + 
+  geom_segment(aes(y = low_coverage, yend = high_coverage), lineend = "butt",
+               position = position_dodge(width = 0.3)) + 
+  theme_bw(base_size = 16) + 
+  theme(text = element_text(family="LM Roman 10"), 
+        panel.grid = element_blank()) + 
+  scale_color_brewer(palette = "Set1") + 
+  geom_hline(yintercept = 0.95, linetype = 2, col = "black") + 
+  labs(x = "Average Occupancy Probability", y = "Coverage", title = "(b)", 
+       col = "Model")
+prev_fig_ci_width <- ggplot(data = prev_fig_df, aes(x = factor(prevalence), y = avg_ci_width, 
+                                                    col = model)) + 
+  geom_point(position = position_dodge(width = 0.3)) + 
+  geom_segment(aes(y = low_ci_width, yend = high_ci_width), lineend = "butt", 
+               position = position_dodge(width = 0.3)) + 
+  theme_bw(base_size = 16) + 
+  theme(text = element_text(family="LM Roman 10"), 
+        panel.grid = element_blank()) + 
+  scale_color_brewer(palette = "Set1") + 
+  labs(x = "Average Occupancy Probability", y = "95% CI Width", title = "(c)", 
+       col = "Model")
+# Spatial decay -----------------------
+decay_fig_df <- fig_4_df %>%
+  group_by(sp_decay, model) %>%
+  summarize(avg_bias = mean(avg_bias, na.rm = TRUE), 
+            low_bias = mean(low_bias, na.rm = TRUE), 
+            high_bias = mean(high_bias, na.rm = TRUE), 
+            avg_coverage = mean(avg_coverage, na.rm = TRUE), 
+            low_coverage = mean(low_coverage, na.rm = TRUE), 
+            high_coverage = mean(high_coverage, na.rm = TRUE), 
+            avg_ci_width = mean(avg_ci_width, na.rm = TRUE), 
+            low_ci_width = mean(low_ci_width, na.rm = TRUE), 
+            high_ci_width = mean(high_ci_width, na.rm = TRUE)) 
+decay_fig_bias <- ggplot(data = decay_fig_df, aes(x = sp_decay, y = avg_bias, 
+                                                  col = model)) + 
+  geom_point(position = position_dodge(width = 1)) + 
+  geom_segment(aes(y = low_bias, yend = high_bias), lineend = "butt", 
+               position = position_dodge(width = 1)) + 
+  scale_color_brewer(palette = "Set1") + 
+  theme_bw(base_size = 16) + 
+  theme(text = element_text(family="LM Roman 10"), 
+        panel.grid = element_blank()) + 
+  geom_hline(yintercept = 0, linetype = 2, col = "black") + 
+  labs(x = "Spatial Decay", y = "Bias", title = "(d)", col = "Model")
+decay_fig_coverage <- ggplot(data = decay_fig_df, aes(x = sp_decay, y = avg_coverage, 
+                                                      col = model)) + 
+  geom_point(position = position_dodge(width = 1)) + 
+  geom_segment(aes(y = low_coverage, yend = high_coverage), lineend = "butt", 
+               position = position_dodge(width = 1)) + 
+  scale_color_brewer(palette = "Set1") + 
+  theme_bw(base_size = 16) + 
+  theme(text = element_text(family="LM Roman 10"), 
+        panel.grid = element_blank()) + 
+  geom_hline(yintercept = 0.95, linetype = 2, col = "black") + 
+  labs(x = "Spatial Decay", y = "Coverage", title = "(e)", col = "Model")
+decay_fig_ci_width <- ggplot(data = decay_fig_df, aes(x = sp_decay, y = avg_ci_width, 
+                                                      col = model)) + 
+  geom_point(position = position_dodge(width = 1)) + 
+  geom_segment(aes(y = low_ci_width, yend = high_ci_width), lineend = "butt", 
+               position = position_dodge(width = 1)) + 
+  scale_color_brewer(palette = "Set1") + 
+  theme_bw(base_size = 16) + 
+  theme(text = element_text(family="LM Roman 10"), 
+        panel.grid = element_blank()) + 
+  labs(x = "Spatial Decay", y = "95% CI Width", title = "(f)", col = "Model")
+# Number of plots
+n_plot_fig_df <- fig_4_df %>%
+  group_by(n_plot, model) %>%
+  summarize(avg_bias = mean(avg_bias, na.rm = TRUE), 
+            low_bias = mean(low_bias, na.rm = TRUE), 
+            high_bias = mean(high_bias, na.rm = TRUE), 
+            avg_coverage = mean(avg_coverage, na.rm = TRUE), 
+            low_coverage = mean(low_coverage, na.rm = TRUE), 
+            high_coverage = mean(high_coverage, na.rm = TRUE), 
+            avg_ci_width = mean(avg_ci_width, na.rm = TRUE), 
+            low_ci_width = mean(low_ci_width, na.rm = TRUE), 
+            high_ci_width = mean(high_ci_width, na.rm = TRUE)) 
+n_plot_fig_bias <- ggplot(data = n_plot_fig_df, aes(x = n_plot, y = avg_bias, 
+                                                    col = model)) + 
+  geom_point(position = position_dodge(width = 20)) + 
+  geom_segment(aes(y = low_bias, yend = high_bias), lineend = "butt", 
+               position = position_dodge(width = 20)) + 
+  scale_color_brewer(palette = "Set1") + 
+  theme_bw(base_size = 16) + 
+  theme(text = element_text(family="LM Roman 10"), 
+        panel.grid = element_blank()) + 
+  geom_hline(yintercept = 0, linetype = 2, col = "black") + 
+  labs(x = "Number of Plots", y = "Bias", title = "(g)", col = "Model")
+n_plot_fig_coverage <- ggplot(data = n_plot_fig_df, aes(x = n_plot, y = avg_coverage, 
+                                                        col = model)) + 
+  geom_point(position = position_dodge(width = 20)) + 
+  geom_segment(aes(y = low_coverage, yend = high_coverage), lineend = "butt", 
+               position = position_dodge(width = 20)) + 
+  scale_color_brewer(palette = "Set1") + 
+  theme_bw(base_size = 16) + 
+  theme(text = element_text(family="LM Roman 10"), 
+        panel.grid = element_blank()) + 
+  geom_hline(yintercept = 0.95, linetype = 2, col = "black") + 
+  labs(x = "Number of Plots", y = "Coverage", title = "(h)", col = "Model")
+n_plot_fig_ci_width <- ggplot(data = n_plot_fig_df, aes(x = n_plot, y = avg_ci_width, 
+                                                        col = model)) + 
+  geom_point(position = position_dodge(width = 20)) + 
+  geom_segment(aes(y = low_ci_width, yend = high_ci_width), lineend = "butt", 
+               position = position_dodge(width = 20)) + 
+  scale_color_brewer(palette = "Set1") + 
+  theme_bw(base_size = 16) + 
+  theme(text = element_text(family="LM Roman 10"), 
+        panel.grid = element_blank()) + 
+  labs(x = "Number of plots", y = "95% CI Width", title = "(i)", col = "Model")
+# Design
+# NOTE: hardcoded 
+design_levels <- c("random", "grid", "h_line", "v_line", "box4", "box16", 
+                   "mod_pref", "heavy_pref")
+design_names <- c("SRS", "SYS", "HT", "VT", "SA", "LA", "MP", "HP")
+design_fig_df <- fig_4_df %>%
+  group_by(design, model) %>%
+  summarize(avg_bias = mean(avg_bias, na.rm = TRUE), 
+            low_bias = mean(low_bias, na.rm = TRUE), 
+            high_bias = mean(high_bias, na.rm = TRUE), 
+            avg_coverage = mean(avg_coverage, na.rm = TRUE), 
+            low_coverage = mean(low_coverage, na.rm = TRUE), 
+            high_coverage = mean(high_coverage, na.rm = TRUE), 
+            avg_ci_width = mean(avg_ci_width, na.rm = TRUE), 
+            low_ci_width = mean(low_ci_width, na.rm = TRUE), 
+            high_ci_width = mean(high_ci_width, na.rm = TRUE)) %>% 
+  mutate(design = factor(as.character(design), levels = design_levels, 
+                         labels = design_names))
+design_fig_bias <- ggplot(data = design_fig_df, aes(x = design, y = avg_bias, 
+                                                    col = model)) + 
+  geom_point(position = position_dodge(width = 0.3)) + 
+  geom_segment(aes(y = low_bias, yend = high_bias), lineend = "butt", 
+               position = position_dodge(width = 0.3)) + 
+  scale_color_brewer(palette = "Set1") + 
+  theme_bw(base_size = 16) + 
+  theme(text = element_text(family="LM Roman 10"), 
+        panel.grid = element_blank()) + 
+  geom_hline(yintercept = 0, linetype = 2, col = "black") + 
+  labs(x = "Sampling Design", y = "Bias", title = "(j)", col = "Model")
+design_fig_coverage <- ggplot(data = design_fig_df, aes(x = design, y = avg_coverage, 
+                                                        col = model)) + 
+  geom_point(position = position_dodge(width = 0.3)) + 
+  geom_segment(aes(y = low_coverage, yend = high_coverage), lineend = "butt", 
+               position = position_dodge(width = 0.3)) + 
+  scale_color_brewer(palette = "Set1") + 
+  theme_bw(base_size = 16) + 
+  theme(text = element_text(family="LM Roman 10"), 
+        panel.grid = element_blank()) + 
+  geom_hline(yintercept = 0.95, linetype = 2, col = "black") + 
+  labs(x = "Sampling Design", y = "Coverage", title = "(k)", col = "Model")
+design_fig_ci_width <- ggplot(data = design_fig_df, aes(x = design, y = avg_ci_width, 
+                                                        col = model)) + 
+  geom_point(position = position_dodge(width = 0.3)) + 
+  geom_segment(aes(y = low_ci_width, yend = high_ci_width), lineend = "butt", 
+               position = position_dodge(width = 0.3)) + 
+  scale_color_brewer(palette = "Set1") + 
+  theme_bw(base_size = 16) + 
+  theme(text = element_text(ggfamily="LM Roman 10"), 
+        panel.grid = element_blank()) + 
+  labs(x = "Sampling Design", y = "95% CI Width", title = "(l)", col = "Model")
+
+fig_s3 <- (prev_fig_bias | prev_fig_coverage | prev_fig_ci_width) / 
+  (decay_fig_bias | decay_fig_coverage | decay_fig_ci_width) / 
+  (n_plot_fig_bias | n_plot_fig_coverage | n_plot_fig_ci_width) / 
+  (design_fig_bias | design_fig_coverage | design_fig_ci_width) + 
+  plot_layout(guides = "collect")
+fig_s3
+ggsave(file = 'figures/Figure-4.png', width = 14, height = 12, units = 'in',
        bg = 'white')

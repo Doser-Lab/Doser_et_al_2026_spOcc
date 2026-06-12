@@ -1,5 +1,5 @@
 # Shiny app for "Survey design considerations for spatial occupancy models"
-# Author: 
+# Author: Alexa R. Busby
 
 #load packages -----------------------------------------------------------------
 
@@ -31,6 +31,8 @@ ui <- page_navbar(
         navset_card_underline(
              nav_panel("Introduction",
                tags$span("Survey design considerations for spatial occupancy models", style = "font-size: 26px"),
+               tags$span("Jeffrey W. Doser", tags$sup(1), ", Robert Howell, Alexa R. Busby", style = "font-size: 18px"),
+               tags$span(tags$sup(1), "Corresponding author; jwdoser@ncsu.edu; ORCID ID: 0000-0002-8950-9895", style = "font-size:12px"),
                tags$span("In review", style = "font-size: 16px; font-style: italic"),
                tags$span("Our Study:", style = "font-size: 16px; font-weight: bold"),
                tags$span("Occupancy models are frequently used to estimate species distributions while 
@@ -61,12 +63,16 @@ ui <- page_navbar(
                          support to the application of spatial occupancy models for estimating species distributions across a 
                          broad range of survey design characteristics.", style = "font-size: 14px"),
                tags$span("Resources", style = "font-size: 16px; font-weight: bold"),
-               tags$span("The code used to generate these results and other helpful resources can be found at the paper's anonymous ",
-                         tags$a(href = "https://github.com/Doser-Lab/Doser_et_al_2026_spOcc/tree/main", "Zenodo repository."), style = "font-size: 14px"),
+               tags$span("The code used to generate these results and other helpful resources can be found at the paper's",
+                         tags$a(href = "https://github.com/Doser-Lab/Doser_et_al_2026_spOcc/tree/main", "GitHub repository."), style = "font-size: 14px"),
+               tags$span(
+                 tags$img(src = "https://doserlab.com/files/spoccupancy-web/logo.png", height = "150px", width = "130px"),
+                 tags$img(src = "https://github.com/Doser-Lab/resources/blob/main/SEFS_Logo_TransparentBG.png?raw=true", height = "230px", width="400px")
+               )
              ), #end of nav_panel1
              
              nav_panel("App Instructions",
-               tags$span("This R Shiny application allows users to explore the results of our simulation study from XXX et al. ",
+               tags$span("This R Shiny application allows users to explore the results of our simulation study from Doser et al. In review.",
                          style = "font-size: 18px"),
                
                tags$span("Page: Sampling Designs", style = "font-size: 16px; font-weight: bold"),

@@ -1,7 +1,7 @@
 # 02_main.R: script to run the complete set of simulations. Inputs to the 
 #            script are assumed to come from the command line for use on the 
-#            HPC. 
-# Author: 
+#            NC State HPC. 
+# Author: Robert Howell and Jeffrey W. Doser 
 rm(list = ls())
 library(spOccupancy)
 
@@ -14,11 +14,25 @@ args <- commandArgs(trailingOnly = TRUE)
 curr_row = as.numeric(args[1])
 replicates = as.numeric(args[2])
 
-# Set directories. NOTE: this does not reflect the true code for running on 
-# an HPC. This was changed to comply with requirements of double-blind review.
-code_dir <- 'code/'
-results_dir <- 'results/full_sim_results/'
-data_dir <- 'data/'
+# Set directories, which differ depending on if we run on our machines locally or 
+# if running on the HPC
+machine.name <- Sys.info()['nodename']
+if (machine.name == 'pop-os' | machine.name == 'ROBBIESLAPTOP') {
+  code_dir <- 'code/'
+  results_dir <- 'results/full_sim_results/'
+  data_dir <- 'data/'
+} else { # Running on HPC
+  if (Sys.info()["user"] == 'jwdoser') { # Jeff running it
+    code_dir <- '/share/doserlab/jwdoser/DHB25/code/'
+    results_dir <- '/share/doserlab/jwdoser/DHB25/results/'
+    data_dir <- '/share/doserlab/jwdoser/DHB25/data/'
+  } else { # Robbie running it 
+    code_dir <- '/share/doserlab/rmhowel3/occ_research/code/'
+    results_dir <- '/share/doserlab/rmhowel3/occ_research/results/'
+    data_dir <- '/share/doserlab/rmhowel3/occ_research/data/'
+    
+  }
+}
 
 # load utils methods and parameters csv
 source(paste0(code_dir, "00_utils.R"))

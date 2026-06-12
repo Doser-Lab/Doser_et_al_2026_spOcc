@@ -1,12 +1,12 @@
 # Survey design considerations for spatial occupancy models 
 
-### Author list
+### [Jeffrey W. Doser](https://doserlab.com/), Robert Howell, Alexa R. Busby
 
 ### In review
 
-### Code/Data DOI: 
+### Code/Data DOI:  
 
-### Please contact the first author for questions: 
+### Please contact the first author for questions: Jeff Doser (jwdoser@ncsu.edu) 
 
 ---------------------------------
 

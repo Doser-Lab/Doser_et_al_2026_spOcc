@@ -3,7 +3,7 @@
 #                      different simulation runs. Each one of the parameter 
 #                      combinations will be run for one of the 1000 simulated 
 #                      landscapes. 
-# Author: 
+# Author: Jeffrey W. Doser 
 
 
 # Number of plots to "collect" data from

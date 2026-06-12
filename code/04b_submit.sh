@@ -1,8 +1,8 @@
 #!/usr/bin/bash
 #
 # Script:  04b_submit.sh
-# Usage: For submitting multiple batch jobs to the HPC.
-# Author: 
+# Usage: For submitting multiple batch jobs to the NC State HPC.
+# Author: Jeffrey W. Doser and Robert Howell
 #
 # To run, type:
 #     ./04b_submit.sh [start_row end_row replicates] 

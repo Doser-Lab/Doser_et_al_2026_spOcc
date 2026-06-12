@@ -1,5 +1,5 @@
 # create_shiny_data.R: script to create objects for easy loading into R Shiny
-# Author: 
+# Author: Alexa R. Busby
 
 rm(list = ls())
 library(dplyr)

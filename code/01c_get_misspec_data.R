@@ -1,6 +1,6 @@
 # 01c_get_misspec_data.R: script to calculate the simulated landscapes for use in the 
 #                 Simulation Study 2. 
-# Author: 
+# Author: Jeffrey W. Doser
 rm(list = ls())
 library(spOccupancy)
 # Required for a function in data_simulation
