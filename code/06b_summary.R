@@ -883,7 +883,7 @@ ggsave(file = 'figures/Figure-S2.png', width = 12, height = 12, units = 'in',
 # Compare spatial vs. nonspatial model ------------------------------------
 spatial_summary_df <- summary_df
 # Loads an object called summary_df
-load("results/misspec-nonspatial_summary_sim_1_results.rda")
+load("results/misspec-nonspatial_summary_sim_2_results.rda")
 
 spatial_summary_df$model <- "Spatial"
 summary_df$model <- "Nonspatial"
@@ -1086,7 +1086,7 @@ design_fig_ci_width <- ggplot(data = design_fig_df, aes(x = design, y = avg_ci_w
                position = position_dodge(width = 0.3)) + 
   scale_color_brewer(palette = "Set1") + 
   theme_bw(base_size = 16) + 
-  theme(text = element_text(ggfamily="LM Roman 10"), 
+  theme(text = element_text(family="LM Roman 10"), 
         panel.grid = element_blank()) + 
   labs(x = "Sampling Design", y = "95% CI Width", title = "(l)", col = "Model")
 
@@ -1096,5 +1096,5 @@ fig_s3 <- (prev_fig_bias | prev_fig_coverage | prev_fig_ci_width) /
   (design_fig_bias | design_fig_coverage | design_fig_ci_width) + 
   plot_layout(guides = "collect")
 fig_s3
-ggsave(file = 'figures/Figure-4.png', width = 14, height = 12, units = 'in',
+ggsave(file = 'figures/Figure-S3.png', width = 14, height = 12, units = 'in',
        bg = 'white')
