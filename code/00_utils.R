@@ -181,18 +181,17 @@ pref_sampling = function(n.plots=400, occ_prob, noise_factor=0.1, J=4900){
 
 
 
-data_simulation = function(x_axis=70, y_axis=70, species_prev=-1, spatial_decay=3/.7, misspec = FALSE) {
+data_simulation = function(x_axis=70, y_axis=70, species_prev=-1, spatial_decay=3/.7, 
+                           misspec = FALSE, sp = TRUE, alpha = c(0.3, 0.5), 
+                           sigma_sq = 1.5) {
   J.x <- x_axis
   J.y <- y_axis
   J <- J.x * J.y  # Total number of grid cells across the landscape
   n.rep <- sample(3, J, replace = TRUE)  # Number of hypothetical repeat surveys at each site. 
   beta <- c(species_prev, 0.2, 0.3)  # The occupancy parameters. The first is the intercept, then the effects of two simulated covariates. 
   p.occ <- length(beta)  # Number of occupancy regression parameters.
-  alpha <- c(0.3, 0.5)  # The detection parameters. The first is the intercept, second is a covariate.
   p.det <- length(alpha)  # Number of detection regression parameters.
   phi <- spatial_decay  # The spatial decay parameter. 
-  sigma.sq <- 1.5  # The spatial variance parameter
-  sp <- TRUE  # Indicates that we want to simulate with a spatial model
   cov.model = 'exponential'  # Using the exponential spatial covariance function. 
   
   
@@ -200,18 +199,19 @@ data_simulation = function(x_axis=70, y_axis=70, species_prev=-1, spatial_decay=
     # If no mis-specification, can simulate with the default simOcc() function in spOccupancy
     # The simOcc() function generates data with the above characteristics. 
     dat <- simOcc(J.x = J.x, J.y = J.y, n.rep = n.rep, beta = beta, alpha = alpha, 
-                  sigma.sq = sigma.sq, phi = phi, sp = sp, cov.model = cov.model)
+                  sigma.sq = sigma_sq, phi = phi, sp = sp, cov.model = cov.model)
   } else {
     # If there is mis-specification, simulate with custom function   
     dat <- simOcc_misspec(J.x = J.x, J.y = J.y, n.rep = n.rep, beta = beta, alpha = alpha, 
-                          sigma.sq = sigma.sq, phi = phi, sp = sp, cov.model = cov.model)
+                          sigma.sq = sigma_sq, phi = phi, sp = sp, cov.model = cov.model)
   }  
 
   return(dat)
 }
 
 run_simulation <- function(dat, n.neighbors = 15, n.threads = 1, method = 'random',
-                           n.plots = 400, line_length = 10, line_spacing = 2, nonspatial = FALSE) {
+                           n.plots = 400, line_length = 10, line_spacing = 2, nonspatial = FALSE, 
+                           waic = FALSE) {
   J <- nrow(dat$X)
   J.x <- sqrt(J)
   J.y <- sqrt(J)
@@ -314,6 +314,12 @@ run_simulation <- function(dat, n.neighbors = 15, n.threads = 1, method = 'rando
                    n.thin = n.thin, 
                    n.chains = n.chains) 
   }
+
+  if (waic) {
+    waic_out <- waicOcc(out)
+  } else {
+    waic_out <- NA
+  }
   
   # Prediction
   # Prediction covariates
@@ -339,7 +345,7 @@ run_simulation <- function(dat, n.neighbors = 15, n.threads = 1, method = 'rando
   psi.sd <- apply(out.pred$psi.0.samples, 2, sd)
   
   out.list <- list(psi.est = psi.pred, psi.ci = psi.ci, 
-                   psi.sd = psi.sd, psi.true = psi.true)
+                   psi.sd = psi.sd, psi.true = psi.true, waic = waic_out)
   
   return(out.list)
   
