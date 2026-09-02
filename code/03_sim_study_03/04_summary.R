@@ -16,7 +16,8 @@ avg_by_scenario <- summary_df |>
             waic = mean(waic)) |>
   ungroup() 
 
-avg_by_scenario |> print(n = Inf)
+
+avg_by_scenario |> mutate(decay = 3 / decay) |> print(n = Inf)
 
 
 summary_df |> 
@@ -67,29 +68,3 @@ ggplot(data = wide_plot_df, aes(x = sigma_sq, y = esr, fill = waic_diff)) +
 ggsave(file = 'figures/Figure-6.png', width = 5, height = 4, units = 'in',
        bg = 'white')
 
-
-# NOTE: not sure these plots are the best way to visualize this. 
-wide_plot_df <- plot_df |> 
-  select(type, variance, decay, coverage, esr, sigma_sq) |> 
-  pivot_wider(names_from = type, values_from = coverage) |>
-  
-
-panel_a <- ggplot(data = wide_plot_df, aes(x = sigma_sq, y = esr, fill = Nonspatial)) +
-  geom_tile(color = 'black') +
-  scale_fill_gradient2(midpoint = 0, high = '#2166AC', mid = 'white', low = '#B2182B') +
-  theme_bw() +
-  theme(panel.grid = element_blank(),
-        text = element_text(family = 'LM Roman 10'), 
-        panel.border = element_blank()) +
-  labs(x = 'Spatial Variance', y = 'Effective Spatial Range', 
-       fill = "Coverage")
-
-panel_b <- ggplot(data = wide_plot_df, aes(x = sigma_sq, y = esr, fill = Spatial)) +
-  geom_tile(color = 'black') +
-  scale_fill_gradient2(midpoint = 0, high = '#2166AC', mid = 'white', low = '#B2182B') +
-  theme_bw() +
-  theme(panel.grid = element_blank(),
-        text = element_text(family = 'LM Roman 10'), 
-        panel.border = element_blank()) +
-  labs(x = 'Spatial Variance', y = 'Effective Spatial Range', 
-       fill = "Coverage")

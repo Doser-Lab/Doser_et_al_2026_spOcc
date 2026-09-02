@@ -4,9 +4,8 @@ archived/
 DHB25.Rproj
 docs/
 .Rhistory
-code/08_code_not_anon.R
-code/app_no_blind/
+code/double_blind/
 anon_code/
 anonymized_code.zip
-code/07_shiny/app.R.bak
-code/07_shiny/rsconnect/
+code/04_shiny/app.R.bak
+code/04_shiny/rsconnect/
